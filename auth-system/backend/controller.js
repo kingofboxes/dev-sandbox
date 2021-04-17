@@ -1,22 +1,26 @@
 const redis = require('./redis');
+const bcrypt = require('bcrypt');
 
-const test = async (req, res) => {
-  console.log(req.body);
-  const val = await redis.get('0');
-  res.send('Hello!');
-  console.log(val);
-};
-
+// Hash a user's password and store into Redis if user does not exist.
 const registerUser = async (req, res) => {
-  res.send('register');
+  let hash = await redis.get(req.body.username);
+  if (hash) {
+    res.status(500).send({ error: 'Username has been taken.' });
+  } else {
+    hash = bcrypt.hashSync(req.body.password, 10);
+    await redis.set(req.body.username, hash);
+    res.status(200).send();
+  }
 };
 
+// Use bcrypt to compare hashes.
 const loginUser = async (req, res) => {
-  res.send('login');
+  let hash = await redis.get(req.body.username);
+  const diff = bcrypt.compareSync(req.body.password, hash);
+  diff ? res.status(200).send() : res.status(500).send({ error: 'Invalid username or password.' });
 };
 
 module.exports = {
-  test,
   registerUser,
   loginUser,
 };

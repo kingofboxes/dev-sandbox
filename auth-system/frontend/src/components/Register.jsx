@@ -6,9 +6,24 @@ import FormControl from 'react-bootstrap/FormControl';
 import InputGroup from 'react-bootstrap/InputGroup';
 
 function Register() {
+  // React hooks.
   const history = useHistory();
+  const [error, setError] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+
+  // POSTs to the backend to register the user.
+  const registerUser = async () => {
+    const res = await fetch('http://localhost:21587/register', {
+      method: 'POST',
+      body: JSON.stringify({ username, password }),
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8',
+      },
+    });
+    res.ok ? history.push('/login') : setError(!res.ok);
+  };
+
   return (
     <>
       <div className="login-form">
@@ -35,13 +50,14 @@ function Register() {
           />
         </InputGroup>
         <div className="buttons-form">
-          <Button variant="primary" onClick={() => console.log(username)}>
+          <Button variant="primary" onClick={registerUser}>
             Sign Up
           </Button>
           <Button variant="secondary" onClick={() => history.push('/login')}>
             Login
           </Button>
         </div>
+        {error && <p style={{ color: 'red' }}> Username has been taken.</p>}
       </div>
     </>
   );
