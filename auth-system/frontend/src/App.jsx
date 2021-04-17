@@ -6,6 +6,7 @@ import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 // Components
+import Home from './components/Home';
 import Login from './components/Login';
 import Register from './components/Register';
 
@@ -15,7 +16,7 @@ function App() {
       <div className="App">
         <Switch>
           <Route exact path="/">
-            <h1>Under development.</h1>
+            <Home />
           </Route>
           <Route path="/login">
             <Login />

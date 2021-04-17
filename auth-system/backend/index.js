@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const router = require('./router');
 const redis = require('./redis');
+const cookieParser = require('cookie-parser');
 
 // Connect to Redis db.
 redis.on('error', function (error) {
@@ -16,7 +17,13 @@ redis.on('ready', () => {
 
 // Create Express instance and adds cors / body-parser functionality.
 const app = express();
-app.use(cors());
+app.use(cookieParser());
+app.use(
+  cors({
+    origin: 'http://localhost:3000',
+    credentials: true,
+  })
+);
 app.use(bodyParser.urlencoded({ limit: '25mb', extended: true }));
 app.use(bodyParser.json({ limit: '25mb' }));
 
@@ -24,6 +31,16 @@ app.use(bodyParser.json({ limit: '25mb' }));
 app.get('/favicon.ico', function (req, res) {
   res.status(204);
   res.end();
+});
+
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
+  res.header(
+    'Access-Control-Allow-Headers',
+    'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+  );
+  res.header('Access-Control-Allow-Credentials', true);
+  next();
 });
 
 // Uses / path as a default.

@@ -7,8 +7,24 @@ import InputGroup from 'react-bootstrap/InputGroup';
 
 function Login() {
   const history = useHistory();
+  const [error, setError] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+
+  // POSTs to the backend to register the user.
+  const loginUser = async () => {
+    const res = await fetch('http://localhost:21587/login', {
+      method: 'POST',
+      credentials: 'include',
+      mode: 'cors',
+      body: JSON.stringify({ username, password }),
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8',
+      },
+    });
+    res.ok ? history.push('/') : setError(!res.ok);
+  };
+
   return (
     <>
       <div className="login-form">
@@ -35,13 +51,14 @@ function Login() {
           />
         </InputGroup>
         <div className="buttons-form">
-          <Button variant="primary" onClick={() => console.log(username)}>
+          <Button variant="primary" onClick={loginUser}>
             Sign In
           </Button>
           <Button variant="secondary" onClick={() => history.push('/register')}>
             Register
           </Button>
         </div>
+        {error && <p style={{ color: 'red' }}>Invalid username or password.</p>}
       </div>
     </>
   );
