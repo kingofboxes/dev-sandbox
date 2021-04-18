@@ -13,7 +13,7 @@ const registerUser = async (req, res) => {
   }
 };
 
-// Use bcrypt to compare hashes.
+// Use bcrypt to compare hashes and log in.
 const loginUser = async (req, res) => {
   try {
     let hash = await redis.get(req.body.username);
@@ -24,8 +24,8 @@ const loginUser = async (req, res) => {
       res.cookie('authSession', req.body.username, {
         maxAge: 900000,
         httpOnly: true,
-        sameSite: true,
-        secure: true,
+        sameSite: 'lax',
+        secure: false,
       });
       res.status(200).send();
     }
@@ -38,10 +38,8 @@ const loginUser = async (req, res) => {
 const fetchData = async (req, res) => {
   const cookie = req.cookies.authSession;
   if (cookie) {
-    console.log('success');
     res.status(200).send({ msg: `Currently logged in as: ${cookie}.` });
   } else {
-    console.log('failure');
     res.status(500).send({ msg: 'Not logged in.' });
   }
 };

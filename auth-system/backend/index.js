@@ -1,7 +1,6 @@
 // Express + middleware.
 const express = require('express');
 const cors = require('cors');
-const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 
 // Custom exports.
@@ -17,8 +16,10 @@ redis.on('ready', () => {
   console.log('Redis client connected.');
 });
 
-// Create Express instance and adds cors / body-parser functionality.
+// Create Express instance and add middleware.
 const app = express();
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
@@ -26,8 +27,6 @@ app.use(
     credentials: true,
   })
 );
-app.use(bodyParser.urlencoded({ limit: '25mb', extended: true }));
-app.use(bodyParser.json({ limit: '25mb' }));
 
 // Ignore favicon get requests.
 app.get('/favicon.ico', function (req, res) {

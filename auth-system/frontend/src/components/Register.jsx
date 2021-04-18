@@ -42,6 +42,7 @@ function Register() {
             <InputGroup.Text id="basic-addon1">Pass:</InputGroup.Text>
           </InputGroup.Prepend>
           <FormControl
+            type="password"
             aria-label="Password"
             aria-describedby="basic-addon1"
             onChange={(e) => setPassword(e.target.value)}
