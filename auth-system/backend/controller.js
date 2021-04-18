@@ -14,40 +14,47 @@ const registerUser = async (req, res) => {
 };
 
 // Use bcrypt to compare hashes.
-const loginUser = async (req, res, next) => {
+const loginUser = async (req, res) => {
   try {
     let hash = await redis.get(req.body.username);
     const diff = bcrypt.compareSync(req.body.password, hash);
     if (!diff) {
       res.status(500).send({ error: 'Invalid password.' });
     } else {
-      res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
-      res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
       res.cookie('authSession', req.body.username, {
         maxAge: 900000,
-        name: 'session',
-        secret: 'booboo',
         httpOnly: true,
-        path: '/',
-        domain: 'localhost',
         sameSite: true,
-        secure: false,
+        secure: true,
       });
       res.status(200).send();
-      next();
     }
   } catch (err) {
     res.status(500).send({ error: 'Invalid username.' });
   }
 };
 
-// Fetch data.
+// Send dummy data back based on the cookie.
 const fetchData = async (req, res) => {
-  console.log(req.cookies.authSession);
+  const cookie = req.cookies.authSession;
+  if (cookie) {
+    console.log('success');
+    res.status(200).send({ msg: `Currently logged in as: ${cookie}.` });
+  } else {
+    console.log('failure');
+    res.status(500).send({ msg: 'Not logged in.' });
+  }
+};
+
+// Signs a user out and clears their cookie.
+const logoutUser = async (req, res) => {
+  res.clearCookie('authSession');
+  res.status(200).send({ msg: 'Logged out successfully.' });
 };
 
 module.exports = {
   fetchData,
   registerUser,
   loginUser,
+  logoutUser,
 };

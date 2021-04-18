@@ -1,10 +1,12 @@
-// Import modules.
+// Express + middleware.
 const express = require('express');
-const bodyParser = require('body-parser');
 const cors = require('cors');
+const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
+
+// Custom exports.
 const router = require('./router');
 const redis = require('./redis');
-const cookieParser = require('cookie-parser');
 
 // Connect to Redis db.
 redis.on('error', function (error) {
@@ -31,16 +33,6 @@ app.use(bodyParser.json({ limit: '25mb' }));
 app.get('/favicon.ico', function (req, res) {
   res.status(204);
   res.end();
-});
-
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
-  res.header(
-    'Access-Control-Allow-Headers',
-    'Origin, X-Requested-With, Content-Type, Accept, Authorization'
-  );
-  res.header('Access-Control-Allow-Credentials', true);
-  next();
 });
 
 // Uses / path as a default.

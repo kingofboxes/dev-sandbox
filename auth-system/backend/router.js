@@ -9,6 +9,7 @@ const router = express.Router();
 router.get('/', controller.fetchData);
 router.post('/login', controller.loginUser);
 router.post('/register', controller.registerUser);
+router.post('/logout', controller.logoutUser);
 
 // Export the router.
 module.exports = router;

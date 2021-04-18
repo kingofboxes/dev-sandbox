@@ -6,13 +6,12 @@ import FormControl from 'react-bootstrap/FormControl';
 import InputGroup from 'react-bootstrap/InputGroup';
 
 function Register() {
-  // React hooks.
   const history = useHistory();
   const [error, setError] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  // POSTs to the backend to register the user.
+  // POST to the backend to register the user.
   const registerUser = async () => {
     const res = await fetch('http://localhost:21587/register', {
       method: 'POST',

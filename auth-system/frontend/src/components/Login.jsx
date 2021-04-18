@@ -11,7 +11,7 @@ function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  // POSTs to the backend to register the user.
+  // POST to backend to log in.
   const loginUser = async () => {
     const res = await fetch('http://localhost:21587/login', {
       method: 'POST',
